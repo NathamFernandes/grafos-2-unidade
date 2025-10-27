@@ -1,94 +1,69 @@
-from collections import deque
+import math
 
-
-def bfs(adj_list, start):
-    """Executa BFS e retorna ordem de visita."""
-    visitados = set()
-    fila = deque([start])
-    ordem = []
-
-    while fila:
-        no = fila.popleft()
-        if no not in visitados:
-            visitados.add(no)
-            ordem.append(no)
-            for vizinho in adj_list[no]:
-                if vizinho not in visitados:
-                    fila.append(vizinho)
-    return ordem
-
-
-def bfs_mat_adj(adj_m, nodes, start):
-    """Executa BFS em matriz de adjacência e retorna ordem de visita."""
-    visitados = set()
-    fila = deque([start])
-    ordem = []
-
-    # mapa de nó para índice da coluna
-    index = {node: i for i, node in enumerate(nodes)}
-
-    while fila:
-        no = fila.popleft()
-        if no not in visitados:
-            visitados.add(no)
-            ordem.append(no)
-            i = index[no]
-            for j, conectado in enumerate(adj_m[i]):
-                if conectado == 1:
-                    vizinho = nodes[j]
-                    if vizinho not in visitados:
-                        fila.append(vizinho)
-    return ordem
-
-
-def dfs(adj_list, start):
-    """Executa DFS recursiva e retorna ordem de visita."""
-    visitados = set()
-    ordem = []
-
-    def _dfs(no):
-        if no in visitados:
-            return
-        visitados.add(no)
-        ordem.append(no)
-        for vizinho in adj_list[no]:
-            if vizinho not in visitados:
-                _dfs(vizinho)
-
-    _dfs(start)
-    return ordem
-
-
-def dfs_forest(adj_list):
+def initialize_single_source(nodes, source):
     """
-    Executa DFS em todo o grafo (floresta DFS) e retorna:
-    - ordem de visita
-    - tempos de início e fim de cada nó
+    Inicializa as distâncias e predecessores para o Bellman-Ford.
+    Distância de cada nó é infinita, exceto a do nó fonte (0).
     """
-    visitados = set()
-    ordem = []
-    tempos = {}
-    tempo = 0
+    dist = {v: math.inf for v in nodes}
+    pred = {v: None for v in nodes}
+    dist[source] = 0
+    return dist, pred
 
-    def _dfs(no):
-        nonlocal tempo
-        if no in visitados:
-            return
-        tempo += 1
-        inicio = tempo
-        visitados.add(no)
-        ordem.append(no)
 
-        for vizinho in adj_list[no]:
-            if vizinho not in visitados:
-                _dfs(vizinho)
+def relax(u, v, w, dist, pred):
+    """
+    Passo de relaxamento de uma aresta (u, v).
+    Se o caminho via u for menor, atualiza dist[v] e pred[v].
+    """
+    if dist[u] + w < dist[v]:
+        dist[v] = dist[u] + w
+        pred[v] = u
 
-        tempo += 1
-        fim = tempo
-        tempos[no] = (inicio, fim)
 
-    for no in sorted(adj_list.keys()):
-        if no not in visitados:
-            _dfs(no)
+def bellman_ford(graph, source):
+    """
+    Implementa o algoritmo de Bellman-Ford.
+    
+    Parâmetros:
+        graph: objeto carregado via pydot (deve ter graph.edges e graph.nodes)
+        source: nó de origem
 
-    return ordem, tempos
+    Retorna:
+        (ok, dist, pred)
+        - ok: False se houver ciclo negativo, True caso contrário
+        - dist: dicionário {nó: distância mínima}
+        - pred: predecessores {nó: pai no caminho mínimo}
+    """
+    # === Inicialização ===
+    dist, pred = initialize_single_source(graph.nodes, source)
+
+    # === Obter pesos das arestas ===
+    # Se o arquivo DOT tiver 'label' como peso, extrai. Caso contrário, usa 1.
+    weighted_edges = []
+    for e in graph.get_edges():
+        u, v = e.get_source(), e.get_destination()
+        label = e.get_label()
+        weight = e.get("weight")
+        val = label or weight
+
+        try:
+            w = int(val) if val is not None else 1
+        except ValueError:
+            w = 1
+
+        weighted_edges.append((u, v, w))
+
+    # === Relaxamento (|V| - 1) vezes ===
+    for _ in range(len(graph.nodes) - 1):
+        for (u, v, w) in weighted_edges:
+            if dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+                pred[v] = u
+
+    # === Detecção de ciclo negativo ===
+    for (u, v, w) in weighted_edges:
+        if dist[u] + w < dist[v]:
+            return False, dist, pred 
+
+    return True, dist, pred
