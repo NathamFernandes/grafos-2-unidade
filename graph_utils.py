@@ -53,3 +53,9 @@ def get_adjacency_list(graph):
         adj_list[node] = sorted(adj_list[node])
 
     return adj_list
+
+def to_weighted(graph):
+    weighted = {}
+    for u, neighbors in graph.items():
+        weighted[u] = {v: 1 for v in neighbors}
+    return weighted
