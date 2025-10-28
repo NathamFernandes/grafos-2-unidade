@@ -22,6 +22,34 @@ def relax(u, v, w, dist, pred):
         dist[v] = dist[u] + w
         pred[v] = u
 
+def floyd_warshall(graph):
+    """
+    Algoritmo de Floyd-Warshall.
+    Calcula as distâncias mínimas entre todos os pares de vértices.
+    graph: dicionário de adjacência com pesos (ex: {'a': {'b': 3, 'c': 5}})
+    Retorna: dicionário com distâncias mínimas entre todos os pares.
+    """
+    vertices = list(graph.keys())
+    dist = {u: {v: float('inf') for v in vertices} for u in vertices}
+
+    # Distância de cada vértice para si mesmo é 0
+    for v in vertices:
+        dist[v][v] = 0
+
+    # Inicializa as distâncias diretas (arestas existentes)
+    for u in graph:
+        for v, w in graph[u].items():
+            dist[u][v] = w
+
+    # Relaxamento de todas as combinações de vértices
+    for k in vertices:
+        for i in vertices:
+            for j in vertices:
+                if dist[i][j] > dist[i][k] + dist[k][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+
+    return dist
+
 
 def bellman_ford(graph, source):
     """
