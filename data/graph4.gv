@@ -1,0 +1,5 @@
+graph G_Gulosa {
+  A -- B [label=10];
+  A -- C [label=10];
+  B -- C [label=1];
+}

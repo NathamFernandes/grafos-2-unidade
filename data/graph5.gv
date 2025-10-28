@@ -1,0 +1,7 @@
+graph G_Ciclo {
+  A -- B [label=2];
+  B -- C [label=2];
+  C -- D [label=2];
+  D -- A [label=4]; // Aresta a ser rejeitada
+  A -- C [label=5]; // Aresta a ser rejeitada
+}
