@@ -1,7 +1,8 @@
 import os
 import sys
+import math
 from graph_utils import load_graph_from_file, get_adjacency_matrix, get_adjacency_list
-from algorithms import bellman_ford
+from algorithms import bellman_ford, prim
 
 # === Entrada do arquivo ===
 dir = os.path.dirname(__file__)
@@ -53,3 +54,47 @@ if graph.nodes:
                 print(f" {v}: inacessível")
             else:
                 print(f" {v}: distância = {d}, predecessor = {p}")
+
+# === Execução do algoritmo de Prim ===
+if graph.nodes:
+    start_node = list(graph.nodes)[0]
+
+    print(f"\n--- Algoritmo de Prim (Árvore Geradora Mínima - AGM) ---")
+    print(f"Nó de origem: {start_node}")
+
+    cost, pred = prim(graph, start_node)
+
+    if cost != math.inf:
+        print(f"Custo Total da AGM: {cost}")
+    else:
+        print("O grafo não é conexo (não foi possível alcançar todos os nós).")
+
+    print("\nEstrutura da AGM:")
+
+    mst_edges = []
+
+    for v in graph.nodes:
+        parent = pred.get(v)
+
+        if parent is not None:
+            mst_edges.append((parent, v))
+
+    if mst_edges:
+        print(f"Arestas (pai -> filho) que compõem a AGM:")
+        for u, v in sorted(mst_edges):
+            print(f"  {u} -- {v}")
+    else:
+        if len(graph.nodes) > 1 and cost != 0:
+            print("  Não foi possível formar a AGM a partir da origem.")
+        elif len(graph.nodes) == 1:
+            print("  O grafo tem apenas um nó (AGM trivial).")
+
+    print("\nPredecessores (Nó: Pai na AGM):")
+    for v in sorted(graph.nodes):
+        predecessor = pred.get(v)
+        if predecessor is not None:
+            print(f"  {v}: {predecessor}")
+        elif v == start_node:
+            print(f"  {v}: (Origem)")
+        else:
+            print(f"  {v}: (Inalcançável)")
