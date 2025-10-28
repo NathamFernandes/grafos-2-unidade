@@ -1,8 +1,8 @@
 import os
 import sys
 import math
-from graph_utils import load_graph_from_file, get_adjacency_matrix, get_adjacency_list
-from algorithms import bellman_ford, prim
+from graph_utils import load_graph_from_file, get_adjacency_matrix, get_adjacency_list, to_weighted
+from algorithms import bellman_ford, prim, floyd_warshall
 
 # === Entrada do arquivo ===
 dir = os.path.dirname(__file__)
@@ -34,6 +34,20 @@ print("\nMatriz de adjacência:\n", adjacency_matrix)
 print("\nLista de adjacência:")
 for k, v in adjacency_list.items():
     print(f" {k}: {v}")
+
+# === Execução do algoritmo de Floyd-Warshall ===
+print("\n--- Algoritmo de Floyd-Warshall ---")
+weighted_graph = to_weighted(adjacency_list)
+distances = floyd_warshall(weighted_graph)
+
+print("\nDistâncias mínimas entre todos os vértices:")
+for u in distances:
+    for v in distances[u]:
+        d = distances[u][v]
+        if d == float('inf'):
+            print(f"{u} -> {v}: ∞")
+        else:
+            print(f"{u} -> {v}: {d}")
 
 # === Execução do algoritmo de Bellman-Ford ===
 if graph.nodes:
