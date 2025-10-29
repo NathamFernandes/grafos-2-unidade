@@ -44,9 +44,9 @@ def floyd_warshall(graph):
     # Relaxamento de todas as combinações de vértices
     for k in vertices:
         for i in vertices:
-            for j in vertices:
-                if dist[i][j] > dist[i][k] + dist[k][j]:
-                    dist[i][j] = dist[i][k] + dist[k][j]
+    for j in vertices:
+        if dist[i][j] == float('inf'):
+            dist[i][j] = math.inf
 
     return dist
 
