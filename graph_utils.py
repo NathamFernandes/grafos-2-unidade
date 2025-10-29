@@ -54,7 +54,7 @@ def get_adjacency_list(graph):
 
     return adj_list
 
-def to_weighted(adjacency_list):def to_weighted(adjacency_list):
+def to_weighted(adjacency_list):
     """Converte uma lista de adjacência não ponderada em uma versão ponderada
     (peso padrão 1 para todas as arestas)."""
     weighted = {}
