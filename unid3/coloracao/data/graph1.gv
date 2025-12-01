@@ -1,0 +1,6 @@
+graph g1 {
+  a -- b [label=4];
+  b -- c [label=2];
+  b -- d [label=5];
+  c -- d [label=1];
+}

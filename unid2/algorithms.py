@@ -22,6 +22,7 @@ def relax(u, v, w, dist, pred):
         dist[v] = dist[u] + w
         pred[v] = u
 
+
 def floyd_warshall(graph):
     """
     Algoritmo de Floyd-Warshall.

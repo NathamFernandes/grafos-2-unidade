@@ -1,0 +1,4 @@
+graph G_Desconexo {
+  A -- B [label=5];  // Componente 1
+  C -- D [label=1];  // Componente 2
+}

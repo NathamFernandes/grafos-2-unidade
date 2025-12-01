@@ -1,0 +1,9 @@
+digraph dg2 {
+    a -> b [label=4];
+    b -> d [label=2];
+    a -> c [label=3];
+    c -> d [label=6];
+    b -> d [label=2];
+    d -> e [label=5];
+    e -> a [label=7];
+}

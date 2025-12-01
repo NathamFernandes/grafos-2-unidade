@@ -1,0 +1,5 @@
+graph G_Padrao {
+  A -- B [label=2];
+  B -- C [label=3];
+  A -- C [label=10];
+}
